@@ -15,14 +15,23 @@ namespace BlazorCrudWithEF.Client.Services.SuperHeroService
         public List<Comic> Comics { get; set; } = new List<Comic>();
         public HttpClient Http { get; }
 
-        public Task GetComics()
+        public async Task GetComics()
         {
-            throw new NotImplementedException();
+            var result = await _http.GetFromJsonAsync<List<Comic>>("api/superhero/comics");
+            if (result != null)
+            {
+                Comics = result;
+            }
         }
 
-        public Task<SuperHero> GetSingleHero(int id)
+        public async Task<SuperHero> GetSingleHero(int id)
         {
-            throw new NotImplementedException();
+            var result = await _http.GetFromJsonAsync<SuperHero>($"api/superhero/{id}");
+            if (result != null)
+            {
+                return result;
+            }
+            throw new Exception("Hero not found!");
         }
 
         public async Task GetSuperHeroes()

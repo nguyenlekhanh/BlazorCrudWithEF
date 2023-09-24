@@ -21,23 +21,28 @@ namespace BlazorCrudWithEF.Server.Controllers
                 FirstName = "Peter",
                 LastName = "Parker",
                 HeroName = "Spiderman",
-                Comic = comics[0]
+                ComicId = 1
             },
             new SuperHero {
                 Id = 1,
                 FirstName = "Bruce",
                 LastName = "Wayne",
                 HeroName = "Batman",
-                Comic = comics[1]
+                ComicId = 2
             }
         };
+
+        [HttpGet("comics")]
+        public async Task<ActionResult<List<Comic>>> GetComics()
+        {
+            return Ok(comics);
+        }
 
         [HttpGet]
         public async Task<ActionResult<List<SuperHero>>> GetSuperHeroes()
         {
             return Ok(heroes);
         }
-
 
         [HttpGet("{id}")]
         public async Task<ActionResult<SuperHero>> GetSuperHeroes(int id)
