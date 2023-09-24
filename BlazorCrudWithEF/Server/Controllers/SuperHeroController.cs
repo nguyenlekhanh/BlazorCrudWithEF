@@ -24,13 +24,19 @@ namespace BlazorCrudWithEF.Server.Controllers
                 ComicId = 1
             },
             new SuperHero {
-                Id = 1,
+                Id = 2,
                 FirstName = "Bruce",
                 LastName = "Wayne",
                 HeroName = "Batman",
                 ComicId = 2
             }
         };
+        private readonly DataContext _context;
+
+        public SuperHeroController(DataContext context)
+        {
+            _context = context;
+        }
 
         [HttpGet("comics")]
         public async Task<ActionResult<List<Comic>>> GetComics()
@@ -41,13 +47,17 @@ namespace BlazorCrudWithEF.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<List<SuperHero>>> GetSuperHeroes()
         {
+            var heroes = await _context.SuperHero.ToListAsync();
+
             return Ok(heroes);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<SuperHero>> GetSuperHeroes(int id)
         {
-            var hero = heroes.FirstOrDefault(h => h.Id == id);
+            var hero = _context.SuperHero
+                            .Include(h => h.Comic)
+                            .FirstOrDefaultAsync(h => h.Id == id);
             if(hero == null)
             {
                 return NotFound("Sorry, no hero here. :/");

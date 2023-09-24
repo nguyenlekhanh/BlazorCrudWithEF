@@ -28,7 +28,7 @@ namespace BlazorCrudWithEF.Server.Controllers.Data
                 },
                 new SuperHero
                 {
-                    Id = 1,
+                    Id = 2,
                     FirstName = "Bruce",
                     LastName = "Wayne",
                     HeroName = "Batman",
