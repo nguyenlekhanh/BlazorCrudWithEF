@@ -53,9 +53,9 @@ namespace BlazorCrudWithEF.Server.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<SuperHero>> GetSuperHeroes(int id)
+        public async Task<ActionResult<SuperHero>> GetSingleHero(int id)
         {
-            var hero = _context.SuperHero
+            var hero = await _context.SuperHero
                             .Include(h => h.Comic)
                             .FirstOrDefaultAsync(h => h.Id == id);
             if(hero == null)
@@ -63,6 +63,62 @@ namespace BlazorCrudWithEF.Server.Controllers
                 return NotFound("Sorry, no hero here. :/");
             }
             return Ok(hero);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<List<SuperHero>>> CreateSuperHero(SuperHero hero)
+        {
+            hero.Comic = null;
+
+            _context.SuperHero.Add(hero);
+            await _context.SaveChangesAsync();
+
+            return Ok(await GetDbHeroes());
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<List<SuperHero>>> UpdateSuperHero(SuperHero hero, int id)
+        {
+            var dbHero = await _context.SuperHero
+                            .Include(h => h.Comic)
+                            .FirstOrDefaultAsync(h => h.Id == id);
+
+            if(dbHero == null)
+            {
+                return NotFound("Sorry, but no hero for you. :/");
+            }
+
+            dbHero.FirstName = hero.FirstName;
+            dbHero.LastName = hero.LastName;
+            dbHero.HeroName = hero.HeroName;
+            dbHero.ComicId = hero.ComicId;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(await GetDbHeroes());
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<List<SuperHero>>> DeleteSuperHero(int id)
+        {
+            var dbHero = await _context.SuperHero
+                            .Include(h => h.Comic)
+                            .FirstOrDefaultAsync(h => h.Id == id);
+
+            if (dbHero == null)
+            {
+                return NotFound("Sorry, but no hero for you. :/");
+            }
+
+            _context.SuperHero.Remove(dbHero);
+            await _context.SaveChangesAsync();
+
+            return Ok(await GetDbHeroes());
+        }
+
+        private async Task<List<SuperHero>> GetDbHeroes()
+        {
+            return await _context.SuperHero.Include(sh => sh.Comic).ToListAsync();
         }
     }
 }

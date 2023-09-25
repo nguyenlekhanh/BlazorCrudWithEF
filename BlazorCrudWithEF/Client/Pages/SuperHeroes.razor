@@ -28,11 +28,17 @@
                     >
                         <i class="oi oi-pencil"></i>
                     </button>
+                    <button class="btn btn-primary"
+                        @onclick="(() => DeleteHero(hero.Id))">
+                        <i class="oi oi-trash"></i>
+                    </button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+<button class="btn btn-primary" @onclick="CreateNewHero">Create Hero</button>
+
 @code {
     protected override async Task OnInitializedAsync()
     {
@@ -42,5 +48,14 @@
     void ShowHero(int id)
     {
         navigationManager.NavigateTo($"hero/{id}");
+    }
+    async Task DeleteHero(int id)
+    {
+        await SuperHeroService.DeleteHero(id);
+    }
+
+    void CreateNewHero()
+    {
+        navigationManager.NavigateTo("/hero");
     }
 }
